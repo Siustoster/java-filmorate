@@ -1,29 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
-import java.time.Duration;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
-public class Film {
+public class User {
     private int id;
     @NotNull
+    @Email
+    private String email;
+    @NotNull
     @NotBlank
+    private String login;
     private String name;
-    private String description;
-    private LocalDate releaseDate;
-    @Positive
-    private int duration;
+    @PastOrPresent
+    private LocalDate birthday;
 
     public static int createdIds=0;
     public static int generateId() {

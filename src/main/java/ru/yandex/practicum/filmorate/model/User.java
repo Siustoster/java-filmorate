@@ -21,7 +21,8 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    public static int createdIds=0;
+    public static int createdIds = 0;
+
     public static int generateId() {
         return ++createdIds;
     }

@@ -25,7 +25,8 @@ public class Film {
     @Positive
     private int duration;
 
-    public static int createdIds=0;
+    public static int createdIds = 0;
+
     public static int generateId() {
         return ++createdIds;
     }

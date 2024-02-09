@@ -17,43 +17,46 @@ import java.util.Map;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    Map<Integer,Film> films = new HashMap<>();
+    Map<Integer, Film> films = new HashMap<>();
+
     @GetMapping
     public List<Film> getFilms() {
         log.info("Запрос всех фильмов");
         return new ArrayList<>(films.values());
     }
+
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        if (film.getDescription().length()>200) {
+        if (film.getDescription().length() > 200) {
             log.warn("Длина описания больше 200");
             throw new ValidationExcepton("Длина описания больше 200");
         }
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER,28))) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
             log.warn("Дата релиза слишком ранняя - {}", film.getReleaseDate());
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
         film.setId(Film.generateId());
-        log.info("Добавлен новый фильм {}",film);
-        films.put(film.getId(),film);
+        log.info("Добавлен новый фильм {}", film);
+        films.put(film.getId(), film);
         return film;
     }
+
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (film.getDescription().length()>200) {
+        if (film.getDescription().length() > 200) {
             log.warn("Длина описания больше 200");
             throw new ValidationExcepton("Длина описания больше 200");
         }
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER,28))) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
             log.warn("Дата релиза слишком ранняя - {}", film.getReleaseDate());
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
-        if(!films.containsKey(film.getId())) {
+        if (!films.containsKey(film.getId())) {
             log.warn("Фильм с айди {} не найден", film.getId());
-            throw  new ValidationExcepton("Фильм не найден");
+            throw new ValidationExcepton("Фильм не найден");
         }
-        log.info("Обновили фильм {} на {}",films.get(film.getId()),film);
-        films.put(film.getId(),film);
+        log.info("Обновили фильм {} на {}", films.get(film.getId()), film);
+        films.put(film.getId(), film);
         return film;
     }
 }

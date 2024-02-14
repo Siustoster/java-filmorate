@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -15,8 +16,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
+    public  int createdIds = 0;
 
+    public int generateId() {
+        return ++createdIds;
+    }
     @GetMapping
     public List<User> getAll() {
         log.info("Запрос всех пользователей");
@@ -29,7 +34,7 @@ public class UserController {
             log.info("Пришло пустое имя");
             user.setName(user.getLogin());
         }
-        user.setId(User.generateId());
+        user.setId(generateId());
         log.info("Создали пользователя {}", user);
         users.put(user.getId(), user);
         return user;
@@ -43,7 +48,7 @@ public class UserController {
         }
         if (!users.containsKey(user.getId())) {
             log.warn("Пользователь с айди {} не найден", user.getId());
-            throw new ValidationExcepton("Пользователь не найден");
+            throw new NotFoundException("Пользователь не найден");
         }
         log.info("Обновили пользователя {} на {}", users.get(user.getId()), user);
         users.put(user.getId(), user);

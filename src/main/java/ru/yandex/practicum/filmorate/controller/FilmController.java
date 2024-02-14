@@ -24,6 +24,7 @@ public class FilmController {
     public int generateId() {
         return ++createdIds;
     }
+
     @GetMapping
     public List<Film> getFilms() {
         log.info("Запрос всех фильмов");

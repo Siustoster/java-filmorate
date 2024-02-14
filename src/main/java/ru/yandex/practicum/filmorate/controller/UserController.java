@@ -17,11 +17,12 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
     private Map<Integer, User> users = new HashMap<>();
-    public  int createdIds = 0;
+    public int createdIds = 0;
 
     public int generateId() {
         return ++createdIds;
     }
+
     @GetMapping
     public List<User> getAll() {
         log.info("Запрос всех пользователей");

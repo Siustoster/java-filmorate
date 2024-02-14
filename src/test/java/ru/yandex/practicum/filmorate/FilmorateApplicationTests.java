@@ -1,13 +1,9 @@
 package ru.yandex.practicum.filmorate;
 
-import com.sun.net.httpserver.HttpExchange;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.controller.FilmController;
@@ -15,10 +11,6 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -171,12 +163,13 @@ class FilmorateApplicationTests {
 
         assertEquals("Фильм не найден", exception.getMessage());
     }
+
     @Test
     @DisplayName("Создание фильма с длинным описанием в 201 символ")
     void createLongDescriptionShouldBeException() {
         film.setDescription("12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-        + "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
-        + "12345678901234567890_");
+                + "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+                + "12345678901234567890_");
 
         ValidationExcepton exception = assertThrows(
                 ValidationExcepton.class,

@@ -55,9 +55,9 @@ public class UserController {
             log.warn("Прислали пустой запрос к users");
             throw new ValidationExcepton("Нельзя присылать пустой запрос");
         }
-            if (user.getName() == null || user.getName().isBlank()) {
-                log.info("Пришло пустое имя");
-                user.setName(user.getLogin());
-            }
+        if (user.getName() == null || user.getName().isBlank()) {
+            log.info("Пришло пустое имя");
+            user.setName(user.getLogin());
+        }
     }
 }

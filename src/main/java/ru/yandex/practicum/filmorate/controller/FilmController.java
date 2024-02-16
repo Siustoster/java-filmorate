@@ -19,9 +19,9 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
-    public int createdIds = 0;
+    private int createdIds = 0;
 
-    public int generateId() {
+    private int generateId() {
         return ++createdIds;
     }
 

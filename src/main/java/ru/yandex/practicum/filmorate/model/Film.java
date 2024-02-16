@@ -8,9 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
 @Builder
 public class Film {
@@ -22,6 +19,4 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-
-
 }

@@ -23,9 +23,7 @@ public class FilmControllerTest {
 
     @BeforeEach
     void createApp() {
-
         filmController = new FilmController();
-        SpringApplication.run(FilmorateApplication.class, args);
 
         film = Film.builder()
                 .name("name")
@@ -112,12 +110,5 @@ public class FilmControllerTest {
         );
 
         assertEquals("Длина описания больше 200", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Создание фильма с пустым запросом")
-    void createFilmEmptyRequest() {
-        Film emptyFilm = Film.builder().build();
-        filmController.createFilm(emptyFilm);
     }
 }

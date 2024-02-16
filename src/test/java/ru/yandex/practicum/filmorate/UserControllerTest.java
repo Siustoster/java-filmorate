@@ -50,7 +50,6 @@ public class UserControllerTest {
         assertEquals(user, createdUser);
     }
 
-
     @Test
     @DisplayName("Создать пользователя без имени")
     void createUserWithoutNameShouldBeLogin() {

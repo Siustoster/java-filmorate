@@ -53,6 +53,10 @@ public class FilmController {
     }
 
     private void validateFilm(Film film) {
+        if (film == null) {
+            log.warn("Прислали пустой запрос к films");
+            throw new ValidationExcepton("Нельзя присылать пустой запрос");
+        }
         if (film.getDescription().length() > 200) {
             log.warn("Длина описания больше 200");
             throw new ValidationExcepton("Длина описания больше 200");

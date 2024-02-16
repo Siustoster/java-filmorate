@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -30,10 +31,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Пришло пустое имя");
-            user.setName(user.getLogin());
-        }
+        validateUser(user);
         user.setId(generateId());
         log.info("Создали пользователя {}", user);
         users.put(user.getId(), user);
@@ -42,10 +40,7 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (user.getName().isBlank()) {
-            log.info("Пришло пустое имя");
-            user.setName(user.getLogin());
-        }
+        validateUser(user);
         if (!users.containsKey(user.getId())) {
             log.warn("Пользователь с айди {} не найден", user.getId());
             throw new NotFoundException("Пользователь не найден");
@@ -53,5 +48,16 @@ public class UserController {
         log.info("Обновили пользователя {} на {}", users.get(user.getId()), user);
         users.put(user.getId(), user);
         return user;
+    }
+
+    private void validateUser(User user) {
+        if (user == null) {
+            log.warn("Прислали пустой запрос к users");
+            throw new ValidationExcepton("Нельзя присылать пустой запрос");
+        }
+            if (user.getName() == null || user.getName().isBlank()) {
+                log.info("Пришло пустое имя");
+                user.setName(user.getLogin());
+            }
     }
 }

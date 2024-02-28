@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -18,49 +20,23 @@ import java.util.Map;
 @RequestMapping("/films")
 
 public class FilmController {
-
-
-
+    @Autowired
+    FilmStorage filmStorage;
 
     @GetMapping
     public List<Film> getFilms() {
 
-        return new ArrayList<>(films.values());
+        return filmStorage.getFilms();
     }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        validateFilm(film);
-        film.setId(generateId());
-
-        films.put(film.getId(), film);
-        return film;
+        return filmStorage.createFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        validateFilm(film);
-        if (!films.containsKey(film.getId())) {
-
-            throw new NotFoundException("Фильм не найден");
-        }
-
-        films.put(film.getId(), film);
-        return film;
+        return filmStorage.updateFilm(film);
     }
 
-    private void validateFilm(Film film) {
-        if (film == null) {
-
-            throw new ValidationExcepton("Нельзя присылать пустой запрос");
-        }
-        if (film.getDescription().length() > 200) {
-
-            throw new ValidationExcepton("Длина описания больше 200");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
-
-            throw new ValidationExcepton("Дата релиза слишком ранняя");
-        }
-    }
 }

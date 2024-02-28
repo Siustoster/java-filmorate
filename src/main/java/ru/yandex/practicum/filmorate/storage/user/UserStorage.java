@@ -10,4 +10,5 @@ public interface UserStorage {
     List<User> getAll();
     User createUser(@Valid @RequestBody User user);
     User updateUser(@Valid @RequestBody User user);
+    User getUserById(int id);
 }

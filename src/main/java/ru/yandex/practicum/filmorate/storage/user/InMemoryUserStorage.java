@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -58,5 +55,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Обновили пользователя {} на {}", users.get(user.getId()), user);
         users.put(user.getId(), user);
         return user;
+
+    }
+
+    public User getUserById(int id) {
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new NotFoundException("Пользователь с айди "+id+" не найден"));
     }
 }

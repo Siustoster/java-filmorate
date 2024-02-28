@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -16,48 +19,53 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private Map<Integer, User> users = new HashMap<>();
-    private int createdIds = 0;
-
-    private int generateId() {
-        return ++createdIds;
-    }
+    @Autowired
+    UserStorage userStorage;
+    @Autowired
+    UserService userService;
 
     @GetMapping
     public List<User> getAll() {
-        log.info("Запрос всех пользователей");
-        return new ArrayList<>(users.values());
+
+        return userStorage.getAll();
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        validateUser(user);
-        user.setId(generateId());
-        log.info("Создали пользователя {}", user);
-        users.put(user.getId(), user);
-        return user;
+        return userStorage.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        validateUser(user);
-        if (!users.containsKey(user.getId())) {
-            log.warn("Пользователь с айди {} не найден", user.getId());
-            throw new NotFoundException("Пользователь не найден");
-        }
-        log.info("Обновили пользователя {} на {}", users.get(user.getId()), user);
-        users.put(user.getId(), user);
-        return user;
+        return userStorage.updateUser(user);
     }
 
-    private void validateUser(User user) {
-        if (user == null) {
-            log.warn("Прислали пустой запрос к users");
-            throw new ValidationExcepton("Нельзя присылать пустой запрос");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Пришло пустое имя");
-            user.setName(user.getLogin());
-        }
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id,@PathVariable int friendId) {
+        userService.addFriend(id,friendId);
     }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id,@PathVariable int friendId) {
+        userService.deleteFriend(id,friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getUserFriendsList(@PathVariable int id) {
+        return userService.getFriends(id);
+    }
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getUsersIntersection(@PathVariable int id,@PathVariable int otherId) {
+        return userService.getFriendsIntersection(id,otherId);
+    }
+    @ExceptionHandler
+    public Map<String, String> handleException(final RuntimeException e) {
+        return Map.of(
+                "error", "Ошибка при выполнении запроса",
+                "errorMessage", e.getMessage()
+        );
+    }
+
+
+
 }

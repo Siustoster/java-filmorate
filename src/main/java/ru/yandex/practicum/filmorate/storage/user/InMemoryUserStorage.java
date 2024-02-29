@@ -2,15 +2,10 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.Valid;
 import java.util.*;
 
 @Component
@@ -33,21 +28,28 @@ public class InMemoryUserStorage implements UserStorage {
             user.setName(user.getLogin());
         }
     }
+
+    @Override
     public List<User> getAll() {
         log.info("Запрос всех пользователей");
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User createUser(User user) {
         validateUser(user);
         user.setId(generateId());
+        user.setFriends(new HashSet<>());
         log.info("Создали пользователя {}", user);
         users.put(user.getId(), user);
         return user;
     }
 
+    @Override
     public User updateUser(User user) {
         validateUser(user);
+        if (user.getFriends() == null)
+            user.setFriends(new HashSet<>());
         if (!users.containsKey(user.getId())) {
             log.warn("Пользователь с айди {} не найден", user.getId());
             throw new NotFoundException("Пользователь не найден");
@@ -55,10 +57,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Обновили пользователя {} на {}", users.get(user.getId()), user);
         users.put(user.getId(), user);
         return user;
-
     }
 
+    @Override
     public User getUserById(int id) {
-        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new NotFoundException("Пользователь с айди "+id+" не найден"));
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new NotFoundException("Пользователь с айди " + id + " не найден"));
     }
 }

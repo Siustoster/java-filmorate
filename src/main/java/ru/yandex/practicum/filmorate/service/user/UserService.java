@@ -15,16 +15,17 @@ import java.util.Set;
 public class UserService {
     @Autowired
     UserStorage userStorage;
+
     public void addFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
         Set<Integer> userFriends = user.getFriends();
         Set<Integer> friendFriends = friend.getFriends();
-        if(userFriends==null)
+        if (userFriends == null)
             userFriends = new HashSet<>();
         userFriends.add(friendId);
 
-        if(friendFriends==null)
+        if (friendFriends == null)
             friendFriends = new HashSet<>();
         friendFriends.add(userId);
 
@@ -32,6 +33,7 @@ public class UserService {
         friend.setFriends(friendFriends);
 
     }
+
     public void deleteFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
@@ -43,20 +45,24 @@ public class UserService {
         user.setFriends(userFriends);
         friend.setFriends(friendFriends);
     }
+
     public List<User> getFriends(int userId) {
         List<User> friends = new ArrayList<>();
         User user = userStorage.getUserById(userId);
-        for(Integer UserId:user.getFriends())
+        for (Integer UserId : user.getFriends())
             friends.add(userStorage.getUserById(UserId));
         return friends;
     }
-    public List<User> getFriendsIntersection(int userId,int friendId) {
+
+    public List<User> getFriendsIntersection(int userId, int friendId) {
         List<User> intersections = new ArrayList<>();
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        Set<Integer> friendList = user.getFriends();
+        Set<Integer> friendList = new HashSet<>(user.getFriends());
+
         friendList.retainAll(friend.getFriends());
-        for(int foundedId:friendList)
+
+        for (int foundedId : friendList)
             intersections.add(userStorage.getUserById(foundedId));
         return intersections;
     }

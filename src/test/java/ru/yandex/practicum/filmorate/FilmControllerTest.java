@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;s
+import java.time.LocalDate;
 
 @SpringBootTest
 public class FilmControllerTest {

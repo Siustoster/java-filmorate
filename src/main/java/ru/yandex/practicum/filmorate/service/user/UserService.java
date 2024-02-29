@@ -47,8 +47,8 @@ public class UserService {
     public List<User> getFriends(int userId) {
         List<User> friends = new ArrayList<>();
         User user = userStorage.getUserById(userId);
-        for (Integer UserId : user.getFriends())
-            friends.add(userStorage.getUserById(UserId));
+        for (Integer foundedUserId : user.getFriends())
+            friends.add(userStorage.getUserById(foundedUserId));
         return friends;
     }
 

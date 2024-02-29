@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class UserService {
 
         user.setFriends(userFriends);
         friend.setFriends(friendFriends);
-
     }
 
     public void deleteFriend(int userId, int friendId) {
@@ -67,8 +65,3 @@ public class UserService {
         return intersections;
     }
 }
-
-/*Создайте UserService, который будет отвечать за такие операции с пользователями, как добавление в друзья,
- удаление из друзей, вывод списка общих друзей. Пока пользователям не надо одобрять заявки в друзья — добавляем сразу.
-  То есть если Лена стала другом Саши, то это значит, что Саша теперь друг Лены.
- */

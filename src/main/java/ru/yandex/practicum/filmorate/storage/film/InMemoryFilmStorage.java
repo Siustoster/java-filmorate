@@ -12,11 +12,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.model.User;
+
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -36,6 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film createFilm(Film film) {
         validateFilm(film);
         film.setId(generateId());
+        film.setLikes(new HashSet<>());
         log.info("Добавлен новый фильм {}", film);
         films.put(film.getId(), film);
         return film;
@@ -48,6 +49,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("Фильм с айди {} не найден", film.getId());
             throw new NotFoundException("Фильм не найден");
         }
+        if(film.getLikes() == null)
+            film.setLikes(new HashSet<>());
         log.info("Обновили фильм {} на {}", films.get(film.getId()), film);
         films.put(film.getId(), film);
         return film;
@@ -66,5 +69,9 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("Дата релиза слишком ранняя - {}", film.getReleaseDate());
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
+    }
+    @Override
+    public Film getFilmById(int id) {
+        return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Фильм с айди " + id + " не найден"));
     }
 }

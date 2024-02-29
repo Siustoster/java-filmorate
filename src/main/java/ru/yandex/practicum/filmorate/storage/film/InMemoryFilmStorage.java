@@ -45,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("Фильм с айди {} не найден", film.getId());
             throw new NotFoundException("Фильм не найден");
         }
-        if(film.getLikes() == null)
+        if (film.getLikes() == null)
             film.setLikes(new HashSet<>());
         log.info("Обновили фильм {} на {}", films.get(film.getId()), film);
         films.put(film.getId(), film);
@@ -66,6 +66,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
     }
+
     @Override
     public Film getFilmById(int id) {
         return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Фильм с айди " + id + " не найден"));

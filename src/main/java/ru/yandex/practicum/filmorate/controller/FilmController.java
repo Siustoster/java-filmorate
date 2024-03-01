@@ -13,30 +13,29 @@ import java.util.List;
 @RequestMapping("/films")
 
 public class FilmController {
+
     @Autowired
-    FilmStorage filmStorage;
-    @Autowired
-    FilmService filmService;
+    private FilmService filmService;
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id) {
-        return filmStorage.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     @GetMapping
     public List<Film> getFilms() {
 
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        return filmStorage.createFilm(film);
+        return filmService.createFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        return filmStorage.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")

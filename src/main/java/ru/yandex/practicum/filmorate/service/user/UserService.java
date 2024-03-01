@@ -64,4 +64,20 @@ public class UserService {
             intersections.add(userStorage.getUserById(foundedId));
         return intersections;
     }
+
+    public List<User> getAll() {
+        return userStorage.getAll();
+    }
+
+    public User getUserById(int id) {
+        return userStorage.getUserById(id);
+    }
+
+    public User createUser(User user) {
+        return userStorage.createUser(user);
+    }
+
+    public User updateUser(User user) {
+        return userStorage.updateUser(user);
+    }
 }

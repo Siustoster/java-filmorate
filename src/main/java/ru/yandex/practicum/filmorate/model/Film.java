@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class Film {
     @Autowired
-    Set<Integer> likes;
+    private Set<Integer> likes;
     private int id;
     @NotNull
     @NotBlank

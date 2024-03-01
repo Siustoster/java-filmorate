@@ -14,21 +14,6 @@ public class InMemoryUserStorage implements UserStorage {
     private Map<Integer, User> users = new HashMap<>();
     private int createdIds = 0;
 
-    private int generateId() {
-        return ++createdIds;
-    }
-
-    private void validateUser(User user) {
-        if (user == null) {
-            log.warn("Прислали пустой запрос к users");
-            throw new ValidationExcepton("Нельзя присылать пустой запрос");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Пришло пустое имя");
-            user.setName(user.getLogin());
-        }
-    }
-
     @Override
     public List<User> getAll() {
         log.info("Запрос всех пользователей");
@@ -63,5 +48,20 @@ public class InMemoryUserStorage implements UserStorage {
     public User getUserById(int id) {
         return Optional.ofNullable(users.get(id)).orElseThrow(()
                 -> new NotFoundException("Пользователь с айди " + id + " не найден"));
+    }
+
+    private int generateId() {
+        return ++createdIds;
+    }
+
+    private void validateUser(User user) {
+        if (user == null) {
+            log.warn("Прислали пустой запрос к users");
+            throw new ValidationExcepton("Нельзя присылать пустой запрос");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            log.info("Пришло пустое имя");
+            user.setName(user.getLogin());
+        }
     }
 }

@@ -17,30 +17,28 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    UserStorage userStorage;
+
     @Autowired
     UserService userService;
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return userStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @GetMapping
     public List<User> getAll() {
-
-        return userStorage.getAll();
+        return userService.getAll();
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return userStorage.createUser(user);
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        return userStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -61,14 +59,5 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getUsersIntersection(@PathVariable int id, @PathVariable int otherId) {
         return userService.getFriendsIntersection(id, otherId);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleException(final RuntimeException e) {
-        return Map.of(
-                "error", "Ошибка при выполнении запроса",
-                "errorMessage", e.getMessage()
-        );
     }
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 @Builder
 public class User {
     @Autowired
-    public Set<Integer> friends;
+    private Set<Integer> friends;
     private int id;
     @NotNull
     @Email

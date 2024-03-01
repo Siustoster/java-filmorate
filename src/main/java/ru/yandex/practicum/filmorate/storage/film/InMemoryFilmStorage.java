@@ -52,6 +52,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Film getFilmById(int id) {
+        return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Фильм с айди " + id + " не найден"));
+    }
+
     private void validateFilm(Film film) {
         if (film == null) {
             log.warn("Прислали пустой запрос к films");
@@ -65,10 +70,5 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("Дата релиза слишком ранняя - {}", film.getReleaseDate());
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
-    }
-
-    @Override
-    public Film getFilmById(int id) {
-        return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Фильм с айди " + id + " не найден"));
     }
 }

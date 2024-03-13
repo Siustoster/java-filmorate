@@ -100,5 +100,13 @@ where u.User_Id = 5
 ````sql
 Select count(*) 
 from Like l
-where Film_Id = 4
+where l.Film_Id = 4
+````
+
+##### Query for all user`s friends
+````sql
+select * from user u
+where u.user_id in
+ (select f.friend_id from Frienship f 
+ where f.Fship_User_Id = 5 and f.Fship_Status_Id = 1)
 ````

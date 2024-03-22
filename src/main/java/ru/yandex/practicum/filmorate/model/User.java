@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 @Builder
 public class User {
-    @Autowired
+
     private Set<Integer> friends;
     private int id;
     @NotNull

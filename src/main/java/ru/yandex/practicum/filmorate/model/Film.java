@@ -13,14 +13,16 @@ import java.util.Set;
 @Data
 @Builder
 public class Film {
-    @Autowired
-    private Set<Integer> likes;
+
     private int id;
     @NotNull
     @NotBlank
     private String name;
     private String description;
     private LocalDate releaseDate;
+    private Set<Genre> genres;
+    private Set<Integer> likes;
+
     @Positive
     private int duration;
 }

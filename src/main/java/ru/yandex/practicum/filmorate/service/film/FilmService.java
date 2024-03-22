@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -13,8 +14,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
+    @Qualifier("FilmDbStorage")
     @Autowired
     FilmStorage filmStorage;
+    @Qualifier("UserDbStorage")
     @Autowired
     UserStorage userStorage;
 

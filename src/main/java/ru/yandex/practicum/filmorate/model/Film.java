@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-@Builder
 public class Film {
 
     private int id;
@@ -22,7 +21,7 @@ public class Film {
     private LocalDate releaseDate;
     private Set<Genre> genres;
     private Set<Integer> likes;
-
+    private Mpa mpa;
     @Positive
     private int duration;
 }

@@ -17,6 +17,7 @@ public class FilmService {
     @Qualifier("FilmDbStorage")
     @Autowired
     FilmStorage filmStorage;
+
     @Qualifier("UserDbStorage")
     @Autowired
     UserStorage userStorage;
@@ -24,7 +25,6 @@ public class FilmService {
     public void setLike(int filmId, int userId) {
         if (userStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        filmStorage.getFilmById(filmId).getLikes().add(userId);
     }
 
     public void deleteLike(int filmId, int userId) {

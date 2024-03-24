@@ -2,10 +2,17 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component("FilmDbStorage")
@@ -18,21 +25,110 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilms() {
-        return null;
+        String sql = "SELECT f.id as film_id, " +
+                "f.name as film_name," +
+                "f.description as film_description," +
+                "f.release_date as film_releasedate," +
+                "f.duration as film_duration, " +
+                "f.RATING_ID, " +
+                "r.CODE as rating_code, " +
+                "r.DESCRIPTION as rating_description, " +
+                "g.ID as  genre_id, " +
+                "g.NAME as genre_name," +
+                "l.USER_ID AS user_like " +
+                "FROM FILM as f " +
+                "left join RATING as r on r.id = f.RATING_ID " +
+                "left join FILMGENRE fg on fg.FILM_ID = f.ID " +
+                "left join GENRE g on g.ID = fg.GENRE_ID " +
+                "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID ";
+        return jdbcTemplate.query(sql, new FilmExtractor());
     }
 
     @Override
     public Film createFilm(Film film) {
-        return null;
+        String sql = "INSERT INTO FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,RATING_ID) VALUES " +
+                "(?,?,?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
+            stmt.setString(1, film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+            stmt.setInt(4, film.getDuration());
+            stmt.setInt(5, film.getMpa().getId());
+            return stmt;
+        }, keyHolder);
+
+        int filmId = keyHolder.getKey().intValue();
+        updateGenre(film.getGenres(), filmId);
+
+        return getFilmById(filmId);
     }
 
     @Override
     public Film updateFilm(Film film) {
-        return null;
+        String sql = "UPDATE FILM " +
+                "set NAME=?, " +
+                "DESCRIPTION=?, " +
+                "RELEASE_DATE=?, " +
+                "DURATION=?, " +
+                "RATING_ID=? " +
+                "WHERE FILM.ID=?";
+
+        jdbcTemplate.update(sql, film.getName(),
+                film.getDescription(),
+                Date.valueOf(film.getReleaseDate()),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
+
+        updateGenre(film.getGenres(), film.getId());
+
+        return getFilmById(film.getId());
     }
 
     @Override
     public Film getFilmById(int id) {
-        return null;
+        String sql = "SELECT f.id as film_id, " +
+                "f.name as film_name," +
+                "f.description as film_description," +
+                "f.release_date as film_releasedate," +
+                "f.duration as film_duration, " +
+                "f.RATING_ID, " +
+                "r.CODE as rating_code, " +
+                "r.DESCRIPTION as rating_description, " +
+                "g.ID as  genre_id, " +
+                "g.NAME as genre_name," +
+                "l.USER_ID AS user_like " +
+                "FROM FILM as f " +
+                "left join RATING as r on r.id = f.RATING_ID " +
+                "left join FILMGENRE fg on fg.FILM_ID = f.ID " +
+                "left join GENRE g on g.ID = fg.GENRE_ID " +
+                "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID " +
+                "where f.ID =? ";
+
+        if (jdbcTemplate.query(sql, new FilmExtractor(), id).isEmpty())
+            throw new NotFoundException("Фильм с айди " + id + " не найден");
+        return jdbcTemplate.query(sql, new FilmExtractor(), id).get(0);
+
+    }
+
+    @Override
+    public void setLike(int filmId, int userId) {
+
+    }
+
+    @Override
+    public void unlike(int filmId, int userId) {
+
+    }
+
+    private void updateGenre(Set<Genre> genreSet, int id) {
+        jdbcTemplate.execute("DELETE FROM FILMGENRE WHERE FILM_ID=" + id);
+        if (genreSet != null && !genreSet.isEmpty())
+            for (Genre ge : genreSet) {
+                jdbcTemplate.update("INSERT INTO FILMGENRE(FILM_ID,GENRE_ID) VALUES(?,?)", id, ge.getId());
+            }
+
     }
 }

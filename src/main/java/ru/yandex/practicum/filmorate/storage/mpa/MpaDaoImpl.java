@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class MpaDaoImpl implements MpaStorage{
+public class MpaDaoImpl implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public MpaDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -26,13 +26,13 @@ public class MpaDaoImpl implements MpaStorage{
     @Override
     public List<Mpa> findMpaById(int id) {
         String sql = "SELECT * FROM RATING WHERE ID=?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs),id);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs), id);
     }
 
     private Mpa makeMpa(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("code");
         String description = rs.getString("description");
-        return new Mpa(id,name,description);
+        return new Mpa(id, name, description);
     }
 }

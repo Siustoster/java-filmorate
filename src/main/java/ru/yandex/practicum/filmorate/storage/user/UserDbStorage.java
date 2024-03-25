@@ -114,11 +114,6 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), userId);
     }
 
-    @Override
-    public List<Integer> getFriendsIntersection(int userId, int friendId) {
-        return null;
-    }
-
     private User makeUser(ResultSet rs) throws SQLException {
         int id = rs.getInt("FRIEND_ID");
         return getUserById(id);

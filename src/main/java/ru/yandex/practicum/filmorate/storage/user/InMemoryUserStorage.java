@@ -65,11 +65,6 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
-    @Override
-    public List<Integer> getFriendsIntersection(int userId, int friendId) {
-        return null;
-    }
-
     private int generateId() {
         return ++createdIds;
     }

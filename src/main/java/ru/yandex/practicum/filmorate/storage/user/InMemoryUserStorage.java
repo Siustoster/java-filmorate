@@ -50,6 +50,26 @@ public class InMemoryUserStorage implements UserStorage {
                 -> new NotFoundException("Пользователь с айди " + id + " не найден"));
     }
 
+    @Override
+    public void addFriend(int userId, int friendId) {
+
+    }
+
+    @Override
+    public void deleteFriend(int userId, int friendId) {
+
+    }
+
+    @Override
+    public List<User> getFriends(int userId) {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getFriendsIntersection(int userId, int friendId) {
+        return null;
+    }
+
     private int generateId() {
         return ++createdIds;
     }

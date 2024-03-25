@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -19,8 +19,8 @@ public class Film {
     private String name;
     private String description;
     private LocalDate releaseDate;
-    private Set<Genre> genres;
-    private Set<Integer> likes;
+    private LinkedHashSet<Genre> genres;
+    private Set<Integer> likes = new HashSet<>();
     private Mpa mpa;
     @Positive
     private int duration;

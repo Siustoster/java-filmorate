@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -40,12 +41,15 @@ public class FilmDbStorage implements FilmStorage {
                 "left join RATING as r on r.id = f.RATING_ID " +
                 "left join FILMGENRE fg on fg.FILM_ID = f.ID " +
                 "left join GENRE g on g.ID = fg.GENRE_ID " +
-                "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID ";
+                "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID " +
+                "ORDER BY f.ID asc,FG.FILM_ID desc";
         return jdbcTemplate.query(sql, new FilmExtractor());
     }
 
     @Override
     public Film createFilm(Film film) {
+        if (film.getReleaseDate().isBefore(Date.valueOf("1890-03-26").toLocalDate()))
+            throw new ValidationExcepton("Дата фильма должна быть позднее 25 марта 1890 г ");
         String sql = "INSERT INTO FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,RATING_ID) VALUES " +
                 "(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -67,6 +71,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        if (film.getReleaseDate().isBefore(Date.valueOf("1890-03-26").toLocalDate()))
+            throw new ValidationExcepton("Дата фильма должна быть позднее 25 марта 1890 г ");
         String sql = "UPDATE FILM " +
                 "set NAME=?, " +
                 "DESCRIPTION=?, " +
@@ -107,20 +113,25 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID " +
                 "where f.ID =? ";
 
-        if (jdbcTemplate.query(sql, new FilmExtractor(), id).isEmpty())
+        List<Film> films = jdbcTemplate.query(sql, new FilmExtractor(), id);
+        if (films.isEmpty())
             throw new NotFoundException("Фильм с айди " + id + " не найден");
-        return jdbcTemplate.query(sql, new FilmExtractor(), id).get(0);
+        return films.get(0);
 
     }
 
     @Override
     public void setLike(int filmId, int userId) {
+        unlike(filmId, userId);
+        String sqlInsert = "INSERT INTO LIKES(film_id, user_id) values ( ?,? )";
+        jdbcTemplate.update(sqlInsert, filmId, userId);
 
     }
 
     @Override
     public void unlike(int filmId, int userId) {
-
+        String sqlDelete = "DELETE FROM LIKES l WHERE l.FILM_ID =" + filmId + " and l.USER_ID =" + userId;
+        jdbcTemplate.execute(sqlDelete);
     }
 
     private void updateGenre(Set<Genre> genreSet, int id) {

@@ -20,38 +20,18 @@ public class UserService {
     public void addFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        Set<Integer> userFriends = user.getFriends();
-        Set<Integer> friendFriends = friend.getFriends();
-        if (userFriends == null)
-            userFriends = new HashSet<>();
-        userFriends.add(friendId);
-
-        if (friendFriends == null)
-            friendFriends = new HashSet<>();
-        friendFriends.add(userId);
-
-        user.setFriends(userFriends);
-        friend.setFriends(friendFriends);
+        userStorage.addFriend(userId, friendId);
     }
 
     public void deleteFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        Set<Integer> userFriends = user.getFriends();
-        Set<Integer> friendFriends = friend.getFriends();
-        userFriends.remove(friendId);
-        friendFriends.remove(userId);
-
-        user.setFriends(userFriends);
-        friend.setFriends(friendFriends);
+        userStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriends(int userId) {
-        List<User> friends = new ArrayList<>();
         User user = userStorage.getUserById(userId);
-        for (Integer foundedUserId : user.getFriends())
-            friends.add(userStorage.getUserById(foundedUserId));
-        return friends;
+        return userStorage.getFriends(userId);
     }
 
     public List<User> getFriendsIntersection(int userId, int friendId) {

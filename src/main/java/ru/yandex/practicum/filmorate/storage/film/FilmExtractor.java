@@ -31,10 +31,10 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
                     .toLocalDateTime().toLocalDate());
             film.setDuration(rs.getInt("film_duration"));
 
-            Integer ratingId = rs.getObject("rating_id",Integer.class);
+            Integer ratingId = rs.getObject("rating_id", Integer.class);
 
             if (ratingId != null) {
-                if (film.getMpa()== null) {
+                if (film.getMpa() == null) {
                     Mpa mpaRating = Mpa.builder().build();
                     mpaRating.setId(ratingId);
                     mpaRating.setName(rs.getString("rating_code"));
@@ -47,10 +47,10 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
             Integer genreId = rs.getObject("genre_id", Integer.class);
 
             if (genreId != null) {
-                Set<Genre> genres = film.getGenres();
+                LinkedHashSet<Genre> genres = film.getGenres();
 
                 if (genres == null) {
-                    genres = new HashSet<>();
+                    genres = new LinkedHashSet<>();
                     film.setGenres(genres);
                 }
 
@@ -64,11 +64,6 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
             Integer userLike = rs.getObject("user_like", Integer.class);
             if (userLike != null) {
                 Set<Integer> likes = film.getLikes();
-
-                if (likes == null) {
-                    likes = new HashSet<>();
-                    film.setLikes(likes);
-                }
                 likes.add(userLike);
             }
         }

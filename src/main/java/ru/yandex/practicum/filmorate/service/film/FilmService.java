@@ -25,12 +25,17 @@ public class FilmService {
     public void setLike(int filmId, int userId) {
         if (userStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
+        if (filmStorage.getFilmById(filmId) == null)
+            throw new NotFoundException("Фильм с id = " + filmId + " не найден");
+        filmStorage.setLike(filmId, userId);
     }
 
     public void deleteLike(int filmId, int userId) {
         if (userStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        filmStorage.getFilmById(filmId).getLikes().remove(userId);
+        if (filmStorage.getFilmById(filmId) == null)
+            throw new NotFoundException("Фильм с id = " + filmId + " не найден");
+        filmStorage.unlike(filmId, userId);
     }
 
     public List<Film> getPopular(int count) {

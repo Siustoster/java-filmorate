@@ -9,6 +9,10 @@ import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.genre.GenreDaoImpl;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaDaoImpl;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -19,9 +23,13 @@ import java.util.Set;
 @Component("FilmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        genreStorage = new GenreDaoImpl(jdbcTemplate);
+        mpaStorage = new MpaDaoImpl(jdbcTemplate);
     }
 
     @Override
@@ -48,8 +56,21 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
+        if (film.getDescription().length() > 100)
+            throw new ValidationExcepton("Максимальная длина описания фильма 100 символов");
         if (film.getReleaseDate().isBefore(Date.valueOf("1890-03-26").toLocalDate()))
             throw new ValidationExcepton("Дата фильма должна быть позднее 25 марта 1890 г ");
+        try {
+            mpaStorage.findMpaById(film.getMpa().getId());
+        } catch (NotFoundException e) {
+            throw new ValidationExcepton("Проверьте корректность указанного рейтинга");
+        }
+        try {
+            for (Genre genre : film.getGenres())
+                genreStorage.findGenreById(genre.getId());
+        } catch (NotFoundException e) {
+            throw new ValidationExcepton("Проверьте корректность указанных жанров");
+        }
         String sql = "INSERT INTO FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,RATING_ID) VALUES " +
                 "(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();

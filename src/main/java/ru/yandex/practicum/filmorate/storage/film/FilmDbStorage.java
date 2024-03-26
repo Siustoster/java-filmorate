@@ -10,8 +10,12 @@ import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.genre.GenreService;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.mpa.MpaService;
+import ru.yandex.practicum.filmorate.storage.genre.GenreDaoImpl;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaDaoImpl;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -22,13 +26,13 @@ import java.util.Set;
 @Component("FilmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    @Autowired
-    private GenreService genreService;
-    @Autowired
-    private MpaService mpaService;
+    private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        genreStorage = new GenreDaoImpl(jdbcTemplate);
+        mpaStorage = new MpaDaoImpl(jdbcTemplate);
     }
 
     @Override
@@ -55,38 +59,42 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
+        List<Mpa> mpaList;
+        List<Genre> genreList;
         if (film.getDescription().length() > 100)
             throw new ValidationExcepton("Максимальная длина описания фильма 100 символов");
         if (film.getReleaseDate().isBefore(Date.valueOf("1890-03-26").toLocalDate()))
             throw new ValidationExcepton("Дата фильма должна быть позднее 25 марта 1890 г ");
-        try {
-            if (film.getMpa() != null)
-                mpaService.getMpaById(film.getMpa().getId());
-        } catch (NotFoundException e) {
-            throw new ValidationExcepton("Проверьте корректность указанного рейтинга");
+        if (film.getMpa() != null) {
+            mpaList = mpaStorage.findMpaById(film.getMpa().getId());
+            if (mpaList.isEmpty())
+                throw new ValidationExcepton("Проверьте корректность указанного рейтинга");
         }
-        try {
-            if (film.getGenres() != null) {
-                for (Genre genre : film.getGenres())
-                    genreService.getGenreById(genre.getId());
+        if (film.getGenres() != null) {
+            for (Genre genre : film.getGenres()) {
+                genreList = genreStorage.findGenreById(genre.getId());
+                if (genreList.isEmpty())
+                    throw new ValidationExcepton("Проверьте корректность указанных жанров");
             }
-        } catch (NotFoundException e) {
-            throw new ValidationExcepton("Проверьте корректность указанных жанров");
         }
+
         String sql = "INSERT INTO FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,RATING_ID) VALUES " +
                 "(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
+        jdbcTemplate.update(connection ->
+        {
             PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
-            stmt.setInt(5, film.getMpa().getId());
+            stmt.setInt(5, film.getMpa().
+                    getId());
             return stmt;
         }, keyHolder);
 
         int filmId = keyHolder.getKey().intValue();
+
         updateGenre(film.getGenres(), filmId);
 
         return getFilmById(filmId);

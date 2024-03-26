@@ -15,7 +15,7 @@ import java.util.Set;
 public class UserService {
     @Qualifier("UserDbStorage")
     @Autowired
-    UserStorage userStorage;
+    private UserStorage userStorage;
 
     public void addFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);

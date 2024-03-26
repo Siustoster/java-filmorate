@@ -20,7 +20,7 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
             Film film = films.get(filmId);
 
             if (film == null) {
-                film = new Film();
+                film = Film.builder().build();
                 films.put(filmId, film);
             }
 

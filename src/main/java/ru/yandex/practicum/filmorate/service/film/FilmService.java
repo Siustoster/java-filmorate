@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 public class FilmService {
     @Qualifier("FilmDbStorage")
     @Autowired
-    FilmStorage filmStorage;
+    private FilmStorage filmStorage;
 
     @Qualifier("UserDbStorage")
     @Autowired
-    UserStorage userStorage;
+    private UserStorage userStorage;
 
     public void setLike(int filmId, int userId) {
         if (userStorage.getUserById(userId) == null)

@@ -18,7 +18,7 @@ public class UserExtractor implements ResultSetExtractor<List<User>> {
             User user = users.get(userId);
 
             if (user == null) {
-                user = new User();
+                user = User.builder().build();
                 users.put(userId, user);
             }
 

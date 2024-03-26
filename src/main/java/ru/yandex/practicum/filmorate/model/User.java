@@ -1,15 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 public class User {
 
-    private Set<Integer> friends;
+    @Builder.Default
+    private Set<Integer> friends = new HashSet<>();
     private int id;
     @NotNull
     @Email

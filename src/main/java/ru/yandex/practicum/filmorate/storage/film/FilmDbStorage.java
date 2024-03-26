@@ -117,7 +117,6 @@ public class FilmDbStorage implements FilmStorage {
         if (films.isEmpty())
             throw new NotFoundException("Фильм с айди " + id + " не найден");
         return films.get(0);
-
     }
 
     @Override
@@ -125,7 +124,6 @@ public class FilmDbStorage implements FilmStorage {
         unlike(filmId, userId);
         String sqlInsert = "INSERT INTO LIKES(film_id, user_id) values ( ?,? )";
         jdbcTemplate.update(sqlInsert, filmId, userId);
-
     }
 
     @Override
@@ -140,6 +138,5 @@ public class FilmDbStorage implements FilmStorage {
             for (Genre ge : genreSet) {
                 jdbcTemplate.update("INSERT INTO FILMGENRE(FILM_ID,GENRE_ID) VALUES(?,?)", id, ge.getId());
             }
-
     }
 }

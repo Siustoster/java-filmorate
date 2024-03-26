@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface MpaStorage {
-    public Collection<Mpa> findAllMpa();
+    Collection<Mpa> findAllMpa();
 
-    public List<Mpa> findMpaById(int id);
+    List<Mpa> findMpaById(int id);
 }

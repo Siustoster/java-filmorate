@@ -79,15 +79,13 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,RATING_ID) VALUES " +
                 "(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection ->
-        {
+        jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
-            stmt.setInt(5, film.getMpa().
-                    getId());
+            stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
 

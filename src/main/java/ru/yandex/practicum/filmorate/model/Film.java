@@ -25,7 +25,7 @@ public class Film {
     private String description;
     private LocalDate releaseDate;
     @Builder.Default
-    private LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
     @Builder.Default
     private Set<Integer> likes = new HashSet<>();
     private Mpa mpa;

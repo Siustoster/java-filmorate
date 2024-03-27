@@ -47,7 +47,7 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
             Integer genreId = rs.getObject("genre_id", Integer.class);
 
             if (genreId != null) {
-                LinkedHashSet<Genre> genres = film.getGenres();
+                Set<Genre> genres = film.getGenres();
 
                 if (genres == null) {
                     genres = new LinkedHashSet<>();
@@ -57,8 +57,8 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
                 Genre genre = Genre.builder().build();
                 genre.setId(genreId);
                 genre.setName(rs.getString("genre_name"));
-
-                genres.add(genre);
+                if (!genres.contains(genre))
+                    genres.add(genre);
             }
 
             Integer userLike = rs.getObject("user_like", Integer.class);

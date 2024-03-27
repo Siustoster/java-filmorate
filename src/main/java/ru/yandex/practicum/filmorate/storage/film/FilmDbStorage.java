@@ -132,7 +132,8 @@ public class FilmDbStorage implements FilmStorage {
                 "left join FILMGENRE fg on fg.FILM_ID = f.ID " +
                 "left join GENRE g on g.ID = fg.GENRE_ID " +
                 "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID " +
-                "where f.ID =? ";
+                "where f.ID =? " +
+                "ORDER BY f.id asc,G.ID asc";
 
         List<Film> films = jdbcTemplate.query(sql, new FilmExtractor(), id);
         if (films.isEmpty())

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -14,44 +15,46 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmService {
 
-    private final FilmStorage FilmDbStorage;
+    @Qualifier("FilmDbStorage")
+    private final FilmStorage filmDbStorage;
 
-    private final UserStorage UserDbStorage;
+    @Qualifier("UserDbStorage")
+    private final UserStorage userDbStorage;
 
     public void setLike(int filmId, int userId) {
-        if (UserDbStorage.getUserById(userId) == null)
+        if (userDbStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        if (FilmDbStorage.getFilmById(filmId) == null)
+        if (filmDbStorage.getFilmById(filmId) == null)
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
-        FilmDbStorage.setLike(filmId, userId);
+        filmDbStorage.setLike(filmId, userId);
     }
 
     public void deleteLike(int filmId, int userId) {
-        if (UserDbStorage.getUserById(userId) == null)
+        if (userDbStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        if (FilmDbStorage.getFilmById(filmId) == null)
+        if (filmDbStorage.getFilmById(filmId) == null)
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
-        FilmDbStorage.unlike(filmId, userId);
+        filmDbStorage.unlike(filmId, userId);
     }
 
     public List<Film> getPopular(int count) {
-        return FilmDbStorage.getPopular(count);
+        return filmDbStorage.getPopular(count);
     }
 
     public Film getFilmById(int id) {
-        return FilmDbStorage.getFilmById(id);
+        return filmDbStorage.getFilmById(id);
     }
 
     public List<Film> getFilms() {
-        return FilmDbStorage.getFilms();
+        return filmDbStorage.getFilms();
     }
 
     public Film createFilm(Film film) {
-        return FilmDbStorage.createFilm(film);
+        return filmDbStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        return FilmDbStorage.updateFilm(film);
+        return filmDbStorage.updateFilm(film);
     }
 
 }

@@ -71,4 +71,19 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationExcepton("Дата релиза слишком ранняя");
         }
     }
+
+    @Override
+    public void setLike(int filmId, int userId) {
+
+    }
+
+    @Override
+    public void unlike(int filmId, int userId) {
+
+    }
+
+    @Override
+    public List<Film> getPopular(int id) {
+        return null;
+    }
 }

@@ -5,8 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
-
 @SpringBootTest
 public class FilmControllerTest {
     private FilmController filmController;
@@ -15,21 +13,7 @@ public class FilmControllerTest {
 
     @BeforeEach
     void createApp() {
-        filmController = new FilmController();
 
-        film = Film.builder()
-                .name("name")
-                .description("film description 1")
-                .duration(100)
-                .releaseDate(LocalDate.of(1895, 12, 28))
-                .build();
-        updatedFilm = Film.builder()
-                .id(1)
-                .name("Film")
-                .description("Film descr2")
-                .duration(200)
-                .releaseDate(LocalDate.of(2020, 5, 2))
-                .build();
     }
  /*
     @Test

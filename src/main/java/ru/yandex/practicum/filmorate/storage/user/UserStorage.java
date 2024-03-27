@@ -14,4 +14,11 @@ public interface UserStorage {
     User updateUser(@Valid @RequestBody User user);
 
     User getUserById(int id);
+
+    void addFriend(int userId, int friendId);
+
+    void deleteFriend(int userId, int friendId);
+
+    List<User> getFriends(int userId);
+
 }

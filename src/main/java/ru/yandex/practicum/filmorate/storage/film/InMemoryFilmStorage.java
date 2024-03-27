@@ -81,4 +81,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void unlike(int filmId, int userId) {
 
     }
+
+    @Override
+    public List<Film> getPopular(int id) {
+        return null;
+    }
 }

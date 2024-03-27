@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.genre;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -10,12 +11,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class GenreDaoImpl implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public GenreDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Collection<Genre> findAllGenres() {

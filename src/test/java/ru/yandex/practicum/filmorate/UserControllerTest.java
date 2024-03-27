@@ -15,20 +15,6 @@ public class UserControllerTest {
 
     @BeforeEach
     void createApp() {
-        userController = new UserController();
-        user = User.builder()
-                .login("login")
-                .email("email@yandex.ru")
-                .name("name")
-                .birthday(LocalDate.now())
-                .build();
-        updatedUser = User.builder()
-                .id(1)
-                .login("login2")
-                .email("email2@yandex.ru")
-                .name("name2")
-                .birthday(LocalDate.of(1995, 1, 1))
-                .build();
     }
 
     /*

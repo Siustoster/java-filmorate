@@ -18,4 +18,6 @@ public interface FilmStorage {
     void setLike(int filmId, int userId);
 
     void unlike(int filmId, int userId);
+
+    List<Film> getPopular(int id);
 }

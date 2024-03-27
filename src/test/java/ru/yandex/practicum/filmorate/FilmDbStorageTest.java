@@ -42,7 +42,7 @@ public class FilmDbStorageTest {
     void init() {
         genreStorage = new GenreDaoImpl(jdbcTemplate);
         mpaStorage = new MpaDaoImpl(jdbcTemplate);
-        filmStorage = new FilmDbStorage(jdbcTemplate);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage, mpaStorage);
         userStorage = new UserDbStorage(jdbcTemplate);
     }
 
@@ -259,11 +259,15 @@ public class FilmDbStorageTest {
     public void mpaGetByIdTest() {
         List<Mpa> mpaList = mpaStorage.findMpaById(1);
         assertNotNull(mpaList);
-        assertEquals(mpaList.get(0), new Mpa(1, "G", "Фильм демонстрируется без ограничений"));
+        assertEquals(mpaList.get(0).getId(), 1);
+        assertEquals(mpaList.get(0).getName(), "G");
+        assertEquals(mpaList.get(0).getDescription(), "Фильм демонстрируется без ограничений");
 
         mpaList = mpaStorage.findMpaById(5);
         assertNotNull(mpaList);
-        assertEquals(mpaList.get(0), new Mpa(5, "NC-17", "Лица 17-летнего возраста и младше на фильм не допускаются"));
+        assertEquals(mpaList.get(0).getId(), 5);
+        assertEquals(mpaList.get(0).getName(), "NC-17");
+        assertEquals(mpaList.get(0).getDescription(), "Лица 17-летнего возраста и младше на фильм не допускаются");
     }
 
     @Test
@@ -284,6 +288,7 @@ public class FilmDbStorageTest {
     public void genreGetByIdTest() {
         List<Genre> genreList = genreStorage.findGenreById(1);
         assertNotNull(genreList);
-        assertEquals(genreList.get(0), new Genre(1, "Комедия"));
+        assertEquals(genreList.get(0).getId(), 1);
+        assertEquals(genreList.get(0).getName(), "Комедия");
     }
 }

@@ -1,64 +1,57 @@
 package ru.yandex.practicum.filmorate.service.film;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
-    @Qualifier("FilmDbStorage")
-    @Autowired
-    private FilmStorage filmStorage;
 
-    @Qualifier("UserDbStorage")
-    @Autowired
-    private UserStorage userStorage;
+    private final FilmStorage FilmDbStorage;
+
+    private final UserStorage UserDbStorage;
 
     public void setLike(int filmId, int userId) {
-        if (userStorage.getUserById(userId) == null)
+        if (UserDbStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        if (filmStorage.getFilmById(filmId) == null)
+        if (FilmDbStorage.getFilmById(filmId) == null)
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
-        filmStorage.setLike(filmId, userId);
+        FilmDbStorage.setLike(filmId, userId);
     }
 
     public void deleteLike(int filmId, int userId) {
-        if (userStorage.getUserById(userId) == null)
+        if (UserDbStorage.getUserById(userId) == null)
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        if (filmStorage.getFilmById(filmId) == null)
+        if (FilmDbStorage.getFilmById(filmId) == null)
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
-        filmStorage.unlike(filmId, userId);
+        FilmDbStorage.unlike(filmId, userId);
     }
 
     public List<Film> getPopular(int count) {
-        return filmStorage.getFilms().stream()
-                .sorted(Comparator.comparingInt(film -> -1 * film.getLikes().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return FilmDbStorage.getPopular(count);
     }
 
     public Film getFilmById(int id) {
-        return filmStorage.getFilmById(id);
+        return FilmDbStorage.getFilmById(id);
     }
 
     public List<Film> getFilms() {
-        return filmStorage.getFilms();
+        return FilmDbStorage.getFilms();
     }
 
     public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
+        return FilmDbStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        return FilmDbStorage.updateFilm(film);
     }
 
 }

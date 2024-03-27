@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -10,9 +11,7 @@ import ru.yandex.practicum.filmorate.Exceptions.ValidationExcepton;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.genre.GenreDaoImpl;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.mpa.MpaDaoImpl;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.sql.Date;
@@ -22,16 +21,11 @@ import java.util.Set;
 
 @Slf4j
 @Component("FilmDbStorage")
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
-
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        genreStorage = new GenreDaoImpl(jdbcTemplate);
-        mpaStorage = new MpaDaoImpl(jdbcTemplate);
-    }
 
     @Override
     public List<Film> getFilms() {
@@ -157,6 +151,32 @@ public class FilmDbStorage implements FilmStorage {
     public void unlike(int filmId, int userId) {
         String sqlDelete = "DELETE FROM LIKES l WHERE l.FILM_ID =" + filmId + " and l.USER_ID =" + userId;
         jdbcTemplate.execute(sqlDelete);
+    }
+
+    @Override
+    public List<Film> getPopular(int limit) {
+        String sql = "SELECT f.id as film_id, " +
+                "f.name as film_name," +
+                "f.description as film_description," +
+                "f.release_date as film_releasedate," +
+                "f.duration as film_duration, " +
+                "f.RATING_ID, " +
+                "r.CODE as rating_code, " +
+                "r.DESCRIPTION as rating_description, " +
+                "g.ID as  genre_id, " +
+                "g.NAME as genre_name," +
+                "l.USER_ID AS user_like, " +
+                "l2.likes " +
+                "FROM FILM as f " +
+                "left join RATING as r on r.id = f.RATING_ID " +
+                "left join FILMGENRE fg on fg.FILM_ID = f.ID " +
+                "left join GENRE g on g.ID = fg.GENRE_ID " +
+                "LEFT JOIN LIKES l ON l.FILM_ID  = f.ID " +
+                "LEFT JOIN (SELECT l2.film_id, count(*) AS likes FROM likes l2 GROUP BY l2.film_id ) " +
+                "l2 ON l2.film_id = f.ID " +
+                "ORDER BY likes DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, new FilmExtractor(), limit);
     }
 
     private void updateGenre(Set<Genre> genreSet, int id) {

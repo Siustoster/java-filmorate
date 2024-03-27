@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.mpa;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -10,12 +11,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MpaDaoImpl implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public MpaDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Collection<Mpa> findAllMpa() {
